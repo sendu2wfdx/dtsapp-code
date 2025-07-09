@@ -1,25 +1,26 @@
-name: Build for armhf
+name: Build ARMHF Binaries
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
 
 jobs:
-  build-armhf:
+  build:
     runs-on: ubuntu-latest
-    name: Cross Compile for armhf
 
     steps:
-      - name: Checkout source code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install cross-compiler
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-arm-linux-gnueabihf
+      - name: Install ARMHF cross compiler
+        run: sudo apt-get update && sudo apt-get install -y gcc-arm-linux-gnueabihf make
 
-      - name: Build using Makefile
-        run: |
-          make CC=arm-linux-gnueabihf-gcc
+      - name: Build all targets
+        run: make
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: armhf-binaries
+          path: bin/
