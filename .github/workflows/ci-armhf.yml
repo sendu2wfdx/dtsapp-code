@@ -1,4 +1,4 @@
-name: Build ARMHF Binaries
+name: CI Build and QEMU Test for armhf
 
 on:
   push:
@@ -6,21 +6,31 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install ARMHF cross compiler
-        run: sudo apt-get update && sudo apt-get install -y gcc-arm-linux-gnueabihf make
+      - name: Install cross-compiler and qemu
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-linux-gnueabihf qemu-user make
 
-      - name: Build all targets
+      - name: Build (static linking)
         run: make
+
+      - name: Run QEMU-based tests
+        run: |
+          for bin in bin/*; do
+            echo "Running $bin under qemu-arm..."
+            qemu-arm -L /usr/arm-linux-gnueabihf "$bin"
+            echo ""
+          done
 
       - name: Upload binaries
         uses: actions/upload-artifact@v4
         with:
-          name: armhf-binaries
+          name: test-binaries-armhf
           path: bin/
