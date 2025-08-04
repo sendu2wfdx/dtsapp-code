@@ -76,7 +76,7 @@ int main()
 
     // 可调配置项
     struct acc_config cfg = {
-        .data_pre_sample        = 500000 - 1,
+        .data_pre_sample        = 50000 - 1,
         .sample_pre_batch       = 50 - 1,
         .accumulator_batches    = 200 - 1,
         .trigger_delay          = 10 - 1,
